@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer
 from sqlalchemy import String, Date, DateTime, text
 from datetime import datetime
+import csv
+from collections import defaultdict
 
 engine = create_engine("postgresql+psycopg2://alunos:AlunoFatec@200.19.224.150:5432/atividade2")
 
@@ -54,3 +56,36 @@ with engine.connect() as conn:
 
 for u in users:
     print(u)
+
+dados_por_ano = defaultdict(list)
+
+def gerar_csv_por_ano():
+    dados_por_ano = defaultdict(list)
+
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM usuarios;"))
+        for row in result:
+            row_anon = LGPD(row)
+            ano = row[5].year
+            dados_por_ano[ano].append(row_anon)
+
+    for ano, registros in dados_por_ano.items():
+        with open(f'{ano}.csv', 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+
+            writer.writerow(['id', 'nome', 'cpf', 'email', 'telefone', 'data_nascimento', 'created_on', 'updated_on'])
+            for r in registros:
+                writer.writerow([
+                    r[0],      
+                    r[1],       
+                    r[2],     
+                    r[3],       
+                    r[4],       
+                    str(r[5]),  
+                    str(r[6]),
+                    str(r[7])  
+                ])
+
+        print(f'Arquivo {ano}.csv gerado com {len(registros)} registros.')
+
+gerar_csv_por_ano()
