@@ -18,3 +18,39 @@ usuarios = Table(
     Column('updated_on', DateTime(), default=datetime.now, onupdate=datetime.now)
 )
 
+def anonimizar_nome(nome):
+    partes = nome.split()
+    return ' '.join(p[0] + '*' * (len(p) - 1) for p in partes)
+
+def anonimizar_cpf(cpf):
+    return cpf[:3] + '.***.***-**'
+
+def anonimizar_email(email):
+    usuario, dominio = email.split('@')
+    return usuario[0] + '*' * (len(usuario) - 1) + '@' + dominio
+
+def anonimizar_telefone(telefone):
+    digitos = ''.join(filter(str.isdigit, telefone))
+    return digitos[-4:]
+
+def LGPD(row):
+    return (
+        row[0],                          
+        anonimizar_nome(row[1]),         
+        anonimizar_cpf(row[2]),           
+        anonimizar_email(row[3]),        
+        anonimizar_telefone(row[4]),     
+        row[5],                          
+        row[6],                          
+        row[7]                            
+    )
+
+users = []
+with engine.connect() as conn:
+    result = conn.execute(text("SELECT * FROM usuarios LIMIT 10;"))
+    for row in result:
+        row = LGPD(row)
+        users.append(row)
+
+for u in users:
+    print(u)
