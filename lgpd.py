@@ -5,7 +5,6 @@ import csv
 from collections import defaultdict
 
 engine = create_engine("postgresql+psycopg2://alunos:AlunoFatec@200.19.224.150:5432/atividade2")
-
 metadata = MetaData()
 
 usuarios = Table(
@@ -57,6 +56,7 @@ with engine.connect() as conn:
 for u in users:
     print(u)
 
+
 dados_por_ano = defaultdict(list)
 
 def gerar_csv_por_ano():
@@ -89,3 +89,21 @@ def gerar_csv_por_ano():
         print(f'Arquivo {ano}.csv gerado com {len(registros)} registros.')
 
 gerar_csv_por_ano()
+
+def gerar_todos():
+    with open('todos.csv', 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+
+        writer.writerow(['nome', 'cpf'])
+
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT nome, cpf FROM usuarios;"))
+            for row in result:
+                writer.writerow([
+                    row[0],   
+                    row[1]    
+                ])
+
+    print('Arquivo todos.csv gerado com sucesso!')
+
+gerar_todos()
