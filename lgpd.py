@@ -60,6 +60,7 @@ for u in users:
 
 dados_por_ano = defaultdict(list)
 
+@medir_tempo
 def gerar_csv_por_ano():
     dados_por_ano = defaultdict(list)
 
@@ -89,9 +90,9 @@ def gerar_csv_por_ano():
 
         print(f'Arquivo {ano}.csv gerado com {len(registros)} registros.')
 
-medir_tempo
 gerar_csv_por_ano()
 
+@medir_tempo
 def gerar_todos():
     with open('todos.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
@@ -108,5 +109,4 @@ def gerar_todos():
 
     print('Arquivo todos.csv gerado com sucesso!')
 
-medir_tempo
 gerar_todos()
