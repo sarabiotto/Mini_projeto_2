@@ -3,6 +3,7 @@ from sqlalchemy import String, Date, DateTime, text
 from datetime import datetime
 import csv
 from collections import defaultdict
+from decorator_tempo import medir_tempo
 
 engine = create_engine("postgresql+psycopg2://alunos:AlunoFatec@200.19.224.150:5432/atividade2")
 metadata = MetaData()
@@ -88,6 +89,7 @@ def gerar_csv_por_ano():
 
         print(f'Arquivo {ano}.csv gerado com {len(registros)} registros.')
 
+medir_tempo
 gerar_csv_por_ano()
 
 def gerar_todos():
@@ -106,4 +108,5 @@ def gerar_todos():
 
     print('Arquivo todos.csv gerado com sucesso!')
 
+medir_tempo
 gerar_todos()
